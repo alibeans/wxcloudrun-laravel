@@ -13,6 +13,9 @@ class CreateOwnersTable extends Migration
      */
     public function up()
     {
+        if (Schema::hasTable('owners')) {
+            return;
+        }
         Schema::create('owners', function (Blueprint $table) {
             $table->increments('id');
             $table->string('openid', 64)->unique()->comment('微信用户openid（云托管注入）');

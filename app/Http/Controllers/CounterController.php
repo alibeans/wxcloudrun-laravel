@@ -1,95 +1,36 @@
 <?php
-// +----------------------------------------------------------------------
-// | 文件: index.php
-// +----------------------------------------------------------------------
-// | 功能: 提供count api接口
-// +----------------------------------------------------------------------
-// | 时间: 2021-12-12 10:20
-// +----------------------------------------------------------------------
-// | 作者: rangangwei<gangweiran@tencent.com>
-// +----------------------------------------------------------------------
 
 namespace App\Http\Controllers;
 
-use Error;
-use Exception;
-use App\Counters;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Log;
+use App\Models\Counters;
+use Illuminate\Http\Request;
 
 class CounterController extends Controller
 {
     /**
-     * 获取todo list
-     * @return Json
+     * 获取当前计数（云托管连通性测试）
      */
     public function getCount()
     {
-        try {
-            $data = (new Counters)->find(1);
-            if ($data == null) {
-                $count = 0;
-            }else {
-                $count = $data["count"];
-            }
-            $res = [
-                "code" => 0,
-                "data" =>  $count
-            ];
-            Log::info('getCount rsp: '.json_encode($res));
-            return response()->json($res);
-        } catch (Error $e) {
-            $res = [
-                "code" => -1,
-                "data" => [],
-                "errorMsg" => ("查询计数异常" . $e->getMessage())
-            ];
-            Log::info('getCount rsp: '.json_encode($res));
-            return response()->json($res);
-        }
+        $counters = Counters::find(1);
+        return response()->json(['code' => 0, 'data' => $counters ? $counters->count : 0]);
     }
 
-
     /**
-     * 根据id查询todo数据
-     * @param $action `string` 类型，枚举值，等于 `"inc"` 时，表示计数加一；等于 `"reset"` 时，表示计数重置（清零）
-     * @return Json
+     * 更新计数：action=inc 自增，action=clear 清零
      */
-    public function updateCount()
+    public function updateCount(Request $request)
     {
-        try {
-            $action = request()->input('action');
-            if ($action == "inc") {
-                $data = (new Counters)->find(1);
-                if ($data == null) {
-                    $count = 1;
-                }else {
-                    $count = $data["count"] + 1;
-                }
-    
-                $counters = new Counters;
-                $counters->updateOrCreate(['id' => 1], ["count" => $count]);
-            }else if ($action == "clear") {
-                Counters::destroy(1);
-                $count = 0;
-            }else {
-                throw '参数action错误';
-            }
+        $action = $request->input('action');
+        $counters = Counters::updateOrCreate(['id' => 1], ['count' => 0]);
 
-            $res = [
-                "code" => 0,
-                "data" =>  $count
-            ];
-            Log::info('updateCount rsp: '.json_encode($res));
-            return response()->json($res);
-        } catch (Exception $e) {
-            $res = [
-                "code" => -1,
-                "data" => [],
-                "errorMsg" => ("更新计数异常" . $e->getMessage())
-            ];
-            Log::info('updateCount rsp: '.json_encode($res));
-            return response()->json($res);
+        if ($action === 'inc') {
+            $counters->count = $counters->count + 1;
+        } elseif ($action === 'clear') {
+            $counters->count = 0;
         }
+        $counters->save();
+
+        return response()->json(['code' => 0, 'data' => $counters->count]);
     }
 }

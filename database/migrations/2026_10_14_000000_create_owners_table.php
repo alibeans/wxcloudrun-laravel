@@ -4,12 +4,10 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOwnersTable extends Migration
+return new class extends Migration
 {
     /**
      * 业主认证表
-     *
-     * @return void
      */
     public function up()
     {
@@ -17,7 +15,7 @@ class CreateOwnersTable extends Migration
             return;
         }
         Schema::create('owners', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->string('openid', 64)->unique()->comment('微信用户openid（云托管注入）');
             $table->string('name', 20)->comment('业主姓名');
             $table->string('phone', 11)->comment('手机号');
@@ -29,13 +27,8 @@ class CreateOwnersTable extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('owners');
     }
-}
+};

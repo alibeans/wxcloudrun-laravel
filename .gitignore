@@ -1,0 +1,53 @@
+/vendor/
+.env
+.env.backup
+.env.production
+
+# IDE files
+/.idea/
+/.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Log files
+/storage/logs/*.log
+/_server_err.log
+/_server_out.log
+
+# Cache files
+/bootstrap/cache/packages.php
+/bootstrap/cache/services.php
+/storage/framework/cache/data/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+!/storage/framework/cache/data/.gitignore
+!/storage/framework/sessions/.gitignore
+!/storage/framework/views/.gitignore
+
+# Storage files
+/storage/app/*
+!/storage/app/public/
+/storage/app/public/*
+!/storage/app/public/.gitignore
+
+# Composer
+composer.lock
+
+# Node modules
+/node_modules/
+/package-lock.json
+/yarn.lock
+
+# Build artifacts
+/public/build/
+/public/hot/
+/public/storage/
+/public/mix-manifest.json
+
+# PHPUnit
+.phpunit.result.cache
